@@ -9,7 +9,7 @@ machine:
 
 dependencies:
   pre:
-    - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+    - echo "https://registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
 
 test:
   pre:
