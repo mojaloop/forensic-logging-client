@@ -1,6 +1,6 @@
 {
   "name": "@mojaloop/forensic-logging-client",
-  "version": "0.5.1",
+  "version": "1.1.0-snapshot",
   "description": "Client for connecting to forensic-logging-sidecar",
   "main": "src/index.js",
   "license": "Apache-2.0",
