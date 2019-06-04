@@ -34,6 +34,14 @@ class Sidecar extends EventEmitter {
     })
   }
 
+  isConnected () {
+    if (!this._connected) {
+      return false
+    }
+
+    return true
+  }
+
   write (msg) {
     if (!this._connected) {
       throw new Error('Sidecar is not connected')

@@ -64,6 +64,36 @@ Test('SidecarClient', sidecarClientTest => {
     createTest.end()
   })
 
+  sidecarClientTest.test('isConnected should', isConnectedTest => {
+    isConnectedTest.test('return true when the client is connected', test => {
+      // Arrange
+      let client = SidecarClient.create()
+      client._connected = true
+      client._socket = { write: sandbox.stub() }
+
+      // Act
+      const result = client.isConnected()
+
+      // Assert
+      test.equal(result, true, 'The client is connected')
+      test.end()
+    })
+
+    isConnectedTest.test('return false when the client is connected', test => {
+      // Arrange
+      let client = SidecarClient.create()
+
+      // Act
+      const result = client.isConnected()
+
+      // Assert
+      test.equal(result, false, 'The client is not connected')
+      test.end()
+    })
+
+    isConnectedTest.end()
+  })
+
   sidecarClientTest.test('connect should', connectTest => {
     connectTest.test('create socket connection and resolve when open', test => {
       let service = 'test'
