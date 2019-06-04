@@ -1,6 +1,6 @@
 {
   "name": "@mojaloop/forensic-logging-client",
-  "version": "5.2.0",
+  "version": "6.2.0",
   "description": "Client for connecting to forensic-logging-sidecar",
   "main": "src/index.js",
   "author": "ModusBox",
