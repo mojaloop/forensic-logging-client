@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@mojaloop/central-services-shared": "5.2.0",
-    "bluebird": "3.5.3"
+    "bluebird": "3.7.0"
   },
   "devDependencies": {
     "faucet": "0.0.1",
