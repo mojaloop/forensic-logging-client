@@ -5,7 +5,7 @@ const Test = require('tapes')(require('tape'))
 const Sinon = require('sinon')
 const Net = require('net')
 const EventEmitter = require('events')
-const Logger = require('@mojaloop/central-services-shared').Logger
+const Logger = require('@mojaloop/central-services-logger')
 const SidecarClient = require(`${src}/index`)
 
 Test('SidecarClient', sidecarClientTest => {
@@ -29,10 +29,10 @@ Test('SidecarClient', sidecarClientTest => {
   })
 
   const writeMessageToBuffer = (msg) => {
-    let message = Buffer.from(msg)
-    let length = message.length
+    const message = Buffer.from(msg)
+    const length = message.length
 
-    let buffer = Buffer.alloc(4 + length)
+    const buffer = Buffer.alloc(4 + length)
     buffer.writeUInt32BE(length, 0)
     message.copy(buffer, 4)
 
@@ -41,8 +41,8 @@ Test('SidecarClient', sidecarClientTest => {
 
   sidecarClientTest.test('create should', createTest => {
     createTest.test('create new connection and set properties', test => {
-      let settings = { host: 'test.com', port: 1234, connectTimeout: 9000, reconnectInterval: 2000 }
-      let conn = SidecarClient.create(settings)
+      const settings = { host: 'test.com', port: 1234, connectTimeout: 9000, reconnectInterval: 2000 }
+      const conn = SidecarClient.create(settings)
 
       test.equal(conn._host, settings.host)
       test.equal(conn._port, settings.port)
@@ -52,7 +52,7 @@ Test('SidecarClient', sidecarClientTest => {
     })
 
     createTest.test('use default property values', test => {
-      let conn = SidecarClient.create()
+      const conn = SidecarClient.create()
 
       test.equal(conn._host, 'localhost')
       test.equal(conn._port, 5678)
@@ -66,18 +66,18 @@ Test('SidecarClient', sidecarClientTest => {
 
   sidecarClientTest.test('connect should', connectTest => {
     connectTest.test('create socket connection and resolve when open', test => {
-      let service = 'test'
+      const service = 'test'
 
-      let settings = { port: 1234, host: 'local' }
-      let client = SidecarClient.create(settings)
+      const settings = { port: 1234, host: 'local' }
+      const client = SidecarClient.create(settings)
 
-      let socketEmitter = new EventEmitter()
+      const socketEmitter = new EventEmitter()
       socketEmitter.connect = sandbox.stub()
       socketEmitter.setKeepAlive = sandbox.stub()
       socketEmitter.write = sandbox.stub()
       Net.Socket.returns(socketEmitter)
 
-      let connectPromise = client.connect(service)
+      const connectPromise = client.connect(service)
       test.ok(Net.Socket.calledWithNew())
       test.notOk(client._connected)
       test.ok(socketEmitter.listenerCount('connect'), 1)
@@ -107,14 +107,14 @@ Test('SidecarClient', sidecarClientTest => {
     })
 
     connectTest.test('reject if connect timeout reached', test => {
-      let settings = { port: 1234, host: 'local', connectTimeout: 5000 }
-      let client = SidecarClient.create(settings)
+      const settings = { port: 1234, host: 'local', connectTimeout: 5000 }
+      const client = SidecarClient.create(settings)
 
-      let socketEmitter = new EventEmitter()
+      const socketEmitter = new EventEmitter()
       socketEmitter.connect = sandbox.stub()
       Net.Socket.returns(socketEmitter)
 
-      let connectPromise = client.connect('test')
+      const connectPromise = client.connect('test')
       test.ok(Net.Socket.calledWithNew())
       test.notOk(client._connected)
       test.ok(socketEmitter.listenerCount('connect'), 1)
@@ -142,25 +142,25 @@ Test('SidecarClient', sidecarClientTest => {
     })
 
     connectTest.test('reconnect if ECONNREFUSED error', test => {
-      let service = 'test'
+      const service = 'test'
 
-      let settings = { port: 1234, host: 'local', connectTimeout: 9000, reconnectInterval: 1000 }
-      let client = SidecarClient.create(settings)
+      const settings = { port: 1234, host: 'local', connectTimeout: 9000, reconnectInterval: 1000 }
+      const client = SidecarClient.create(settings)
 
-      let socketEmitter = new EventEmitter()
+      const socketEmitter = new EventEmitter()
       socketEmitter.connect = sandbox.stub()
       socketEmitter.setKeepAlive = sandbox.stub()
       socketEmitter.write = sandbox.stub()
       Net.Socket.returns(socketEmitter)
 
-      let connectPromise = client.connect(service)
+      const connectPromise = client.connect(service)
       test.ok(Net.Socket.calledWithNew())
       test.notOk(client._connected)
       test.ok(socketEmitter.listenerCount('connect'), 1)
       test.ok(socketEmitter.listenerCount('error'), 1)
       test.equal(socketEmitter.listeners('error')[0].name.indexOf('_socketOnError'), -1)
 
-      let error = new Error('Error connecting to websocket')
+      const error = new Error('Error connecting to websocket')
       error.code = 'ECONNREFUSED'
       socketEmitter.emit('error', error)
 
@@ -187,21 +187,21 @@ Test('SidecarClient', sidecarClientTest => {
     })
 
     connectTest.test('reject if error event emitted', test => {
-      let settings = { port: 1234, host: 'local' }
-      let client = SidecarClient.create(settings)
+      const settings = { port: 1234, host: 'local' }
+      const client = SidecarClient.create(settings)
 
-      let socketEmitter = new EventEmitter()
+      const socketEmitter = new EventEmitter()
       socketEmitter.connect = sandbox.stub()
       Net.Socket.returns(socketEmitter)
 
-      let connectPromise = client.connect()
+      const connectPromise = client.connect()
       test.ok(Net.Socket.calledWithNew())
       test.notOk(client._connected)
       test.ok(socketEmitter.listenerCount('connect'), 1)
       test.ok(socketEmitter.listenerCount('error'), 1)
       test.equal(socketEmitter.listeners('error')[0].name.indexOf('_socketOnError'), -1)
 
-      let error = new Error('Error connecting to socket')
+      const error = new Error('Error connecting to socket')
       socketEmitter.emit('error', error)
 
       connectPromise
@@ -223,7 +223,7 @@ Test('SidecarClient', sidecarClientTest => {
     })
 
     connectTest.test('return immediately if already connected', test => {
-      let client = SidecarClient.create()
+      const client = SidecarClient.create()
       client._connected = true
 
       client.connect()
@@ -238,12 +238,12 @@ Test('SidecarClient', sidecarClientTest => {
 
   sidecarClientTest.test('write should', writeTest => {
     writeTest.test('frame message with length and write to socket', test => {
-      let client = SidecarClient.create()
+      const client = SidecarClient.create()
       client._connected = true
       client._socket = { write: sandbox.stub() }
 
-      let message = 'This is a test message'
-      let buffer = writeMessageToBuffer(message)
+      const message = 'This is a test message'
+      const buffer = writeMessageToBuffer(message)
 
       client.write(message)
       test.ok(client._socket.write.calledWith(buffer))
@@ -251,12 +251,12 @@ Test('SidecarClient', sidecarClientTest => {
     })
 
     writeTest.test('not convert Buffer before writing', test => {
-      let client = SidecarClient.create()
+      const client = SidecarClient.create()
       client._connected = true
       client._socket = { write: sandbox.stub() }
 
-      let message = 'This is a test message'
-      let buffer = writeMessageToBuffer(message)
+      const message = 'This is a test message'
+      const buffer = writeMessageToBuffer(message)
 
       client.write(Buffer.from(message))
       test.ok(client._socket.write.calledWith(buffer))
@@ -264,7 +264,7 @@ Test('SidecarClient', sidecarClientTest => {
     })
 
     writeTest.test('throw error if client not connected', test => {
-      let client = SidecarClient.create()
+      const client = SidecarClient.create()
 
       try {
         client.write('test')
@@ -281,23 +281,23 @@ Test('SidecarClient', sidecarClientTest => {
 
   sidecarClientTest.test('receiving socket close event should', closeEventTest => {
     closeEventTest.test('log close details, mark disconnected and emit close event', test => {
-      let closeSpy = sandbox.spy()
+      const closeSpy = sandbox.spy()
 
-      let client = SidecarClient.create()
+      const client = SidecarClient.create()
       client.on('close', closeSpy)
 
-      let socketEmitter = new EventEmitter()
+      const socketEmitter = new EventEmitter()
       socketEmitter.connect = sandbox.stub()
       socketEmitter.setKeepAlive = sandbox.stub()
       socketEmitter.write = sandbox.stub()
       Net.Socket.returns(socketEmitter)
 
-      let connectPromise = client.connect()
+      const connectPromise = client.connect()
       socketEmitter.emit('connect')
 
       connectPromise
         .then(() => {
-          let hadError = true
+          const hadError = true
           socketEmitter.emit('close', hadError)
           test.notOk(client._connected)
           test.ok(closeSpy.calledOnce)
@@ -311,23 +311,23 @@ Test('SidecarClient', sidecarClientTest => {
 
   sidecarClientTest.test('receiving socket error event should', errorEventTest => {
     errorEventTest.test('log error, mark disconnected and emit close event', test => {
-      let closeSpy = sandbox.spy()
+      const closeSpy = sandbox.spy()
 
-      let client = SidecarClient.create()
+      const client = SidecarClient.create()
       client.on('close', closeSpy)
 
-      let socketEmitter = new EventEmitter()
+      const socketEmitter = new EventEmitter()
       socketEmitter.connect = sandbox.stub()
       socketEmitter.setKeepAlive = sandbox.stub()
       socketEmitter.write = sandbox.stub()
       Net.Socket.returns(socketEmitter)
 
-      let connectPromise = client.connect()
+      const connectPromise = client.connect()
       socketEmitter.emit('connect')
 
       connectPromise
         .then(() => {
-          let err = new Error()
+          const err = new Error()
           socketEmitter.emit('error', err)
           test.notOk(client._connected)
           test.ok(closeSpy.calledOnce)

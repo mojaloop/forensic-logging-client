@@ -1,6 +1,6 @@
 {
   "name": "@mojaloop/forensic-logging-client",
-  "version": "5.2.0",
+  "version": "8.3.0",
   "description": "Client for connecting to forensic-logging-sidecar",
   "main": "src/index.js",
   "author": "ModusBox",
@@ -26,17 +26,17 @@
     "test:coverage-check": "npm run test:coverage && istanbul check-coverage"
   },
   "dependencies": {
-    "@mojaloop/central-services-shared": "5.2.0",
-    "bluebird": "3.5.3"
+    "@mojaloop/central-services-logger": "8.1.2",
+    "bluebird": "3.7.1"
   },
   "devDependencies": {
     "faucet": "0.0.1",
     "istanbul": "1.1.0-alpha.1",
     "pre-commit": "1.2.2",
-    "standard": "12.0.1",
-    "sinon": "7.2.4",
-    "tap-xunit": "2.3.0",
-    "tape": "4.10.1",
+    "standard": "14.3.1",
+    "sinon": "7.5.0",
+    "tap-xunit": "2.4.1",
+    "tape": "4.11.0",
     "tapes": "4.1.0"
   },
   "publishConfig": {

@@ -3,7 +3,7 @@
 const Net = require('net')
 const EventEmitter = require('events')
 const P = require('bluebird')
-const Logger = require('@mojaloop/central-services-shared').Logger
+const Logger = require('@mojaloop/central-services-logger')
 
 class Sidecar extends EventEmitter {
   constructor (settings) {
@@ -39,10 +39,10 @@ class Sidecar extends EventEmitter {
       throw new Error('Sidecar is not connected')
     }
 
-    let message = Buffer.isBuffer(msg) ? msg : Buffer.from(msg)
-    let length = message.length
+    const message = Buffer.isBuffer(msg) ? msg : Buffer.from(msg)
+    const length = message.length
 
-    let buffer = Buffer.alloc(4 + length)
+    const buffer = Buffer.alloc(4 + length)
     buffer.writeUInt32BE(length, 0)
     message.copy(buffer, 4)
     this._socket.write(buffer)
@@ -51,12 +51,11 @@ class Sidecar extends EventEmitter {
   _connect () {
     const connectErrorListener = (err) => {
       this._socket.removeAllListeners()
+      const self = this
 
       switch (err.code) {
         case 'ECONNREFUSED':
           Logger.info(`Error connecting to sidecar, attempting to connect after sleeping ${this._reconnectInterval}ms`)
-
-          let self = this
           this._reconnectTimer = setTimeout(() => {
             self._connect()
           }, this._reconnectInterval)
