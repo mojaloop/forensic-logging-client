@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@mojaloop/central-services-logger": "8.1.2",
-    "bluebird": "3.7.1"
+    "bluebird": "3.7.2"
   },
   "devDependencies": {
     "faucet": "0.0.1",
